@@ -7,19 +7,20 @@ import config from '../../utils/config.js'
 
 Page({
   data: {
-    wid: '',
-    hei: ''
+    id: ''
   },
-  onLoad: function() {
-    const info = wx.getSystemInfoSync();
-    this.setData({
-      wid: info.screenWidth,
-      hei: info.screenHeight
-    })
-
+  onLoad: function(options) {
+    if (options && options.id) {
+      this.setData({
+        id: options.id
+      })
+    }
   },
   onShow() {
     var that = this
+    wx.showLoading({
+      title: '3D加载中',
+    })
     this.getToken().then(token => {
       that.loadARData().then(arData => {
         const query = wx.createSelectorQuery().in(that)
@@ -29,8 +30,12 @@ Page({
             const canvas = new THREE.global.registerCanvas(res[0].node);
             arLoader(canvas, THREE, arData)
           });
+      }).catch(err => {
+        wx.hideLoading()
+        console.log(err)
       })
     }).catch(err => {
+      wx.hideLoading()
       console.log(err)
     })
   },
@@ -51,7 +56,7 @@ Page({
           },
           success: function(res) {
             if (res && res.data && res.data.token) {
-              wx.setStorageSync('token', res.data.token)
+              wx.setStorageSync('ar-token', res.data.token)
               resolve(res.data.token)
             } else {
               reject()
@@ -71,7 +76,7 @@ Page({
   loadARData() {
     return new Promise((resolve, reject) => {
       var that = this
-      _loadARData().then((res) => {
+      _loadARData(that.data.id).then((res) => {
         resolve(res)
       }).catch(err => {
         wx.showToast({

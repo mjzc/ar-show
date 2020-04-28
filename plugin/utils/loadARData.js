@@ -1,17 +1,11 @@
-import {
-  randomChar
-} from './utils'
-import {
-  makeSig
-} from './signature'
 import config from './config.js'
 
-export function _loadARData() {
+export function _loadARData(id) {
   return new Promise((resolve, reject) => {
     wx.request({
-      url: config.APIROOT + '/api/resource/info/' + 232,
+      url: config.APIROOT + '/api/resource/info/' + id,
       header: {
-        "token": wx.getStorageSync('token')
+        "token": wx.getStorageSync('ar-token')
       },
       success: function(res) {
         const data = res.data

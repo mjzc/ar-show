@@ -11,13 +11,15 @@ export default async function(canvas, THREE, arData) {
     wid,
     hei,
     animate,
-    controls;
+    controls,
+    pixelRatio;
   var data = JSON.parse(arData.data)
 
   animate = function() {
     controls.update();
     renderer.render(scene, camera);
     canvas.requestAnimationFrame(animate);
+    wx.hideLoading()
   };
 
   scene = new THREE.Scene();
@@ -25,6 +27,7 @@ export default async function(canvas, THREE, arData) {
   const info = wx.getSystemInfoSync();
   wid = info.screenWidth
   hei = info.screenHeight
+  pixelRatio = info.pixelRatio
 
   camera = new THREE.PerspectiveCamera(45, wid / hei, 1, 1000);
   camera.position.set(0, 0, 20);
@@ -32,8 +35,12 @@ export default async function(canvas, THREE, arData) {
 
   controls = new OrbitControls(camera, canvas);
 
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true,
+  });
   renderer.setSize(wid, hei);
+  renderer.setPixelRatio(pixelRatio)
 
   loader = new THREE.ObjectLoader();
 
