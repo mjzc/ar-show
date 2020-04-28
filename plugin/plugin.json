@@ -1,0 +1,8 @@
+{
+  "publicComponents": {
+  },
+  "pages": {
+    "ar-show": "pages/ar-show/ar-show"
+  },
+  "main": "index.js"
+}
